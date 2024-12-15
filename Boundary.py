@@ -8,7 +8,7 @@ from keras.api.optimizers import Adam
 import pandas as pd
 
 # Load the Titanic dataset
-url = 'C:/Users/Msi01/OneDrive - Chitralada Technology Institute/AI/Homework/Boundary/titanic.csv'
+url = 'C:/Users/Msi01/OneDrive - Chitralada Technology Institute/AI/Homework/titanic.csv'
 data = pd.read_csv(url)
 
 # Selecting features and target variable

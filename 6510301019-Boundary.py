@@ -2,55 +2,54 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-# สร้างข้อมูลสำหรับ Class 1 และ Class 2
-x1, y1 = make_blobs(n_samples=100,
-                   n_features=2,
-                   centers=1,
-                   center_box=(2.0, 2.0),
-                   cluster_std=0.23,
-                   random_state=64)
+# สร้างข้อมูลสำหรับ Data set A และ B
+x1, y1 = make_blobs(n_samples=100, n_features=2, centers=[[2.0, 2.0]], cluster_std=0.75, random_state=64)
+x2, y2 = make_blobs(n_samples=100, n_features=2, centers=[[3.0, 3.0]], cluster_std=0.75, random_state=64)
 
-x2, y2 = make_blobs(n_samples=100,
-                   n_features=2,
-                   centers=1,
-                   center_box=(3.0, 3.0),
-                   cluster_std=0.23,
-                   random_state=64)
-
-# รวมข้อมูลทั้งหมดเพื่อทำการปรับขนาด
+# รวมข้อมูลและปรับ Label
 X = np.vstack((x1, x2))
+y = np.hstack((np.zeros(100), np.ones(100)))  # Class A = 0, Class B = 1
 
-# ใช้ StandardScaler
+# ใช้ StandardScaler เพื่อปรับขนาดข้อมูล
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+X_scaled[:, 0] = X_scaled[:, 0] * -1
 
-# แยกข้อมูลที่ปรับขนาดแล้วกลับออกเป็น x1 และ x2
-x1_scaled = X_scaled[:100, :]
-x2_scaled = X_scaled[100:, :]
 
-# นิยามฟังก์ชันตัดสินใจ (decision function)
-def decision_function(x1, x2):
-    return x1 + x2 - 0
+# แบ่งข้อมูลสำหรับ Train และ Test
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.5, random_state=45)
 
-# สร้าง grid สำหรับ decision boundary
+# สร้าง Neural Network
+clf = MLPClassifier(hidden_layer_sizes=(10,), max_iter=1000, random_state=45)
+clf.fit(X_train, y_train)
+
+# ประเมินผลการทำงาน
+y_pred = clf.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
+
+# สร้าง Grid สำหรับ Decision Boundary
 x1_range = np.linspace(-3, 3, 500)
 x2_range = np.linspace(-3, 3, 500)
 x1_grid, x2_grid = np.meshgrid(x1_range, x2_range)
 
-# คำนวณค่าฟังก์ชันตัดสินใจ
-g_values = decision_function(x1_grid, x2_grid)
+# คำนวณ Decision Boundary
+Z = clf.predict_proba(np.c_[x1_grid.ravel(), x2_grid.ravel()])[:, 1]
+Z = Z.reshape(x1_grid.shape)
 
-# พล็อต Decision Plane รวมกับจุดข้อมูล
+# พล็อตผลลัพธ์
 plt.figure(figsize=(8, 6))
-plt.contourf(x1_grid, x2_grid, g_values, levels=[-np.inf, 0, np.inf], colors=['red', 'blue'], alpha=0.5)
-plt.contour(x1_grid, x2_grid, g_values, levels=[0], colors='black', linewidths=2)  # เส้นแบ่ง
-plt.scatter(x1_scaled[:, 0], x1_scaled[:, 1], color='purple', s=60, label='Class 1', alpha=1)
-plt.scatter(x2_scaled[:, 0], x2_scaled[:, 1], color='yellow', s=60, label='Class 2', alpha=1)
+plt.contourf(x1_grid, x2_grid, Z, levels=[0, 0.5, 1], colors=['red', 'blue'], alpha=0.5)
+plt.contour(x1_grid, x2_grid, Z, levels=[0.5], colors='black', linewidths=2)  # เส้นแบ่ง
+plt.scatter(X_scaled[y == 0][:, 0], X_scaled[y == 0][:, 1], color='red', s=60, label='Class 1', alpha=1)
+plt.scatter(X_scaled[y == 1][:, 0], X_scaled[y == 1][:, 1], color='blue', s=60, label='Class 2', alpha=1)
 plt.xlabel('Feature x1')
 plt.ylabel('Feature x2')
 plt.title('Decision Plane')
-plt.legend(loc='upper right')
+plt.legend(loc='lower right')
 plt.grid(True)
 plt.xlim(-3, 3)
 plt.ylim(-3, 3)
