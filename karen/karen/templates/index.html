@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แปลภาษาไทย - Karen</title>
+    <script>
+        async function translateText(direction) {
+            let inputText = '';
+            let url = '/translate';
+            
+            if (direction === 'thai-to-karen') {
+                inputText = document.getElementById("thaiText").value;
+            } else if (direction === 'karen-to-thai') {
+                inputText = document.getElementById("karenText").value;
+            }
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: inputText, direction: direction })
+            });
+
+            const data = await response.json();
+            document.getElementById("translatedText").innerText = "ผลการแปล: " + data.translated_text;
+            document.getElementById("output-box").style.display = 'block'; // แสดงกล่องผลลัพธ์
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        textarea, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        textarea {
+            height: 100px;
+        }
+        .output-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h2>แปลภาษาไทย - Karen</h2>
+
+    <!-- กล่องสำหรับป้อนข้อความภาษาไทย -->
+    <h3>ป้อนข้อความภาษาไทย:</h3>
+    <textarea id="thaiText" placeholder="ป้อนข้อความภาษาไทยที่นี่..."></textarea>
+    <button onclick="translateText('thai-to-karen')">แปลเป็น Karen</button>
+
+    <!-- กล่องสำหรับป้อนข้อความภาษา Karen -->
+    <h3>ป้อนข้อความภาษา Karen:</h3>
+    <textarea id="karenText" placeholder="ป้อนข้อความภาษากะเหรี่ยงที่นี่..."></textarea>
+    <button onclick="translateText('karen-to-thai')">แปลเป็น ภาษาไทย</button>
+
+    <!-- กล่องแสดงผลการแปล -->
+    <div id="output-box" class="output-box" style="display:none;">
+        <h3>ผลการแปล:</h3>
+        <p id="translatedText"></p>
+    </div>
+</body>
+</html>

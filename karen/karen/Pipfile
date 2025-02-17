@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+numpy = "*"
+tensorflow = "*"
+nltk = "*"
+flask = "*"
+openpyxl = "*"
+rouge-score = "*"
+scikit-learn = "*"
+torch = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
