@@ -1,0 +1,28 @@
+>mysql -u root -p #เข้าสู่ระบบ
+
+> SHOW DATABASES; #ดูฐ่นข้อมูล
+
+> USE karen_translate; #เลือกฐานข้อมูลก่อนใช้งาน
+
+> INSERT INTO translations (karen_text, thai_text, confidence)  #นำเข้าข้อมูล
+VALUES 
+('အီၣ်', 'กิน', 1.0),
+('တၢ်ဘျုး', 'ขอบคุณ', 1.0),
+('မံၤ', 'ชื่อ', 1.0);
+
+SELECT * FROM translations; #เช็คข้อมูลในตาราง
+
+SELECT thai_text FROM translations WHERE karen_text = 'တၢ်ဘျုး'; #ลองค้นหาคำแปล
+
+# อัพเดทคำแปล 
+UPDATE translations 
+SET thai_text = 'ขอบคุณ' 
+WHERE karen_text = 'တၢ်ဘျုး';
+
+#ลบคำศัพท์
+DELETE FROM translations WHERE karen_text = 'မံၤ';
+
+> INSERT INTO translations (karen_text, thai_text, confidence)  #นำเข้าข้อมูล
+VALUES 
+('အီၣ်', 'กิน', 1.0),
+
