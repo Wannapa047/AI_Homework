@@ -61,10 +61,10 @@ decoder_dense = Dense(num_words, activation='softmax')
 decoder_outputs = decoder_dense(decoder_outputs)
 
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # เทรนโมเดล
-epochs = 100
+epochs = 50
 batch_size = 64
 model.fit([thai_padded, karen_padded], karen_padded, batch_size=batch_size, epochs=epochs, validation_split=0.1)
 
